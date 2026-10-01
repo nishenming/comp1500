@@ -2,8 +2,15 @@
 
 # You are going to write a very simple program:
 
-# Ask a user to enter two numbers (one per input)
+#Ask a user to enter two numbers (one per input)
 
+try:
+        number1 = int(input("enter first number: "))
+        number2 = int(input("enter second number: "))
+        answer = number1 * number2
+        print(answer)
+except ValueError:
+        print("That is not a numbsr")        
 # multiply those numbers together
 
 # print out the result
