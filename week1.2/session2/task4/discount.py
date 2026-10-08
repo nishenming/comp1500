@@ -17,7 +17,7 @@ if is_student == "student and member":
     final_cost = cost * 0.7
 elif is_member == "memeber":
     final_cost = cost * 0.75
-elif :is_student == "student"
+elif :is_student or is_member == "student or memeber"
     final_cost = cost * 0.85
 else:
     final_cost = cost
