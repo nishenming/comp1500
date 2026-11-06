@@ -23,13 +23,15 @@ class Point:
         """
         Returns distance of this Point from the origin.
         """
-        return math.hypot(self.x, self.y)
+        return math.sqrt(self.x * self.x + self.y * self.y)
 
     def distance_to(self, p):
         """
         Returns distance of this Point from another Point.
         """
-        return math.hypot(self.x - p.x, self.y - p.y)
+        dx = self.x - p.x
+        dy = self.y - p.y
+        return math.sqrt(dx * dx + dy * dy)
 
     def __str__(self):
         """
@@ -46,10 +48,6 @@ class Circle:
     def __init__(self, radius, centre=Point(0.0, 0.0)):
         """
         Creates a Circle, given values for radius & centre coordinates.
-
-        Radius must always be supplied. Centre coordinates are optional
-        but should be provided as a Point object. If they are omitted, the
-        circle will be centred at the origin.
         """
         self.radius = radius
         self.centre = centre
@@ -72,4 +70,9 @@ class Circle:
         """
         return f"radius={self.radius}, centre={self.centre}"
 
-    # Implement your __contains__() method here
+    def __contains__(self, p):
+        """
+        Returns True if the given Point is inside this Circle.
+        """
+        distance = self.centre.distance_to(p)
+        return distance < self.radius
