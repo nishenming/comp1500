@@ -2,9 +2,14 @@
 
 course = "computer science"
 
-for ch in course:
-	print(ch)
+characters = []
 
+for ch in course:
+	characters.append(ch)
+
+characters.sort()
+
+print(characters)
 
 # create a list data structure of the characters from the course string
 # sort the list into alphabetical order
