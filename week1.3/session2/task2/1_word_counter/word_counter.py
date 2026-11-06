@@ -5,11 +5,19 @@
 
 # open and read the file
 
-# calculate the number of words
-# hint: you could use .split() to break up by spaces
-# hint: watch out for empty lines that might give you empty strings
+filename = input("Which file do you want to count? ")
 
-# display the wordcount
+try:
+    with open(filename, "r") as file:
+        text = file.read()
+except FileNotFoundError:
+    print("I cannot find that file")
+else:
+    # calculate the number of words
+    words = text.split()
+
+    # display the wordcount
+    print(f"There are {len(words)} words in {filename}")
 
 # Here are the word counts you should get:
 # story.txt - 290
