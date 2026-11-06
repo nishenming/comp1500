@@ -1,7 +1,10 @@
 # Another bad class implementation
 
 # What does the runtime error mean?
+# The values go into local variables x and y, not into the object,
+# so the object has no attribute x.
 # How do we fix the code?
+# Store them as self.x and self.y.
 
 class Point:
     """
@@ -12,8 +15,8 @@ class Point:
         """
         Creates a Point, given x & y coordinates.
         """
-        x = x_coordinate
-        y = y_coordinate
+        self.x = x_coordinate
+        self.y = y_coordinate
 
 
 p = Point(1.5, 2.0)
