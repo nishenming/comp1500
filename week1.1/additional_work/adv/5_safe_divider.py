@@ -8,7 +8,12 @@
 numerator_input = input("Enter the numerator: ")
 denominator_input = input("Enter the denominator: ")
 
-# TODO: wrap the risky operations in a try/except block
-# TODO: convert the values to integers and perform the division
-# TODO: print clear feedback when something goes wrong
-# TODO: only show the answer when the division succeeds
+try:
+    numerator = int(numerator_input)
+    denominator = int(denominator_input)
+    answer = numerator / denominator
+    print(f"{numerator} / {denominator} = {answer:.2f}")
+except ValueError:
+    print("That is not a number")
+except ZeroDivisionError:
+    print("You cannot divide by zero")
