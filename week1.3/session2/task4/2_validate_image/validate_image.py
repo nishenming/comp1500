@@ -3,16 +3,57 @@
 # Open a pgm image
 # You could handle file errors with try/except
 
-# Read the file content
+filename = input("Name of the PGM file (for example gradient.pgm): ")
+path = "../images/" + filename
 
-# Store the width, the height, and the maximum gray value
+try:
+    with open(path, "r") as file:
+        lines = file.readlines()
+except FileNotFoundError:
+    print("I cannot find that image")
+else:
+    # Read the file content
+    data = []
+    for line in lines:
+        line = line.strip()
+        if line == "" or line.startswith("#"):
+            continue
+        data.append(line)
 
-# For each pixel, check if the pixel value is between 0 and the maximum gray value inclusive
+    # Store the width, the height, and the maximum gray value
+    width, height = data[1].split()
+    width = int(width)
+    height = int(height)
+    max_gray = int(data[2])
 
-# Check if the widths and heights are the same as specified
+    # the pixel values start after P2, the width/height and the max gray value
+    pixels = []
+    for line in data[3:]:
+        row = []
+        for value in line.split():
+            row.append(int(value))
+        pixels.append(row)
 
-# 4. Print the final verdit.
-#  Print `Valid image` if the widths, the heights are the same, and all pixel values between 0 and the maximum gray value inclusive
-#  Print `Invalid width` if the widths are different
-#  Print `Invalid height` if the heights are different
-#  Print `Invalid pixel values` if any pixel values is less than 0 and greater than the maximum gray value
+    # Check if the widths and heights are the same as specified
+    if len(pixels) != height:
+        print("Invalid height")
+    else:
+        wrong_width = False
+        for row in pixels:
+            if len(row) != width:
+                wrong_width = True
+
+        if wrong_width:
+            print("Invalid width")
+        else:
+            # For each pixel, check if the pixel value is between 0 and the max gray value
+            wrong_pixel = False
+            for row in pixels:
+                for value in row:
+                    if value < 0 or value > max_gray:
+                        wrong_pixel = True
+
+            if wrong_pixel:
+                print("Invalid pixel values")
+            else:
+                print("Valid image")
