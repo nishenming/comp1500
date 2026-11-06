@@ -17,15 +17,21 @@ def digits_sum(number):
     Returns:
         int: The sum of the digits of the input integer.
     """
-    # complete your code here
-    # base case
+    if number < 10:
+        return number
 
-    # recursive case
+    return number % 10 + digits_sum(number // 10)
 
 
-# check if correct output is produced
+def digits_sum_loop(number):
+    total = 0
+    while number > 0:
+        total = total + number % 10
+        number = number // 10
+    return total
+
+
 print(digits_sum(987))  # Output: 24
 print(digits_sum(12345))  # Output: 15
-
-
-# Once completed, your next task is to write an equivalent function that uses loops.
+print(digits_sum_loop(987))
+print(digits_sum_loop(12345))
