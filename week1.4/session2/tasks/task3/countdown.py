@@ -14,16 +14,21 @@ def countdown(n):
         None, prints the countdown sequence from n to 0.
     """
 
-    # Complete your code here
-    # base case
+    if n < 0:
+        return
 
-    # recursive case
+    print(n)
+    countdown(n - 1)
 
 
-# check if correct output is produced
+def countdown_loop(n):
+    while n >= 0:
+        print(n)
+        n = n - 1
+
+
 countdown(30)    # 30 ... 0 (Note: each number is printed in a separate line)
 countdown(5)     # 5 ... 0  (Note: each number in printed in a separate line)
 
-
-# Once you have completed, your next task is to write an equivalent function that
-# uses a loop.
+print("loop version:")
+countdown_loop(5)

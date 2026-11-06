@@ -17,15 +17,13 @@ def divide_and_remainder(dividend, divisor):
         tuple: A tuple containing (quotient, remainder).
     """
 
-    # complete your code here
+    quotient = dividend // divisor
+    remainder = dividend % divisor
 
-    # Returning both quotient and remainder
     return quotient, remainder
 
-# Check if correct output is produced
 quotient, remainder = divide_and_remainder(10, 3)
 print(f"Quotient: {quotient}")    # Output: Quotient: 3
 print(f"Remainder: {remainder}")  # Output: Remainder: 1
 
-# Directly print the returned tuple
 print(divide_and_remainder(33, 3))  # Output: (11, 0)

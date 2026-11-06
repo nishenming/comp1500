@@ -5,10 +5,12 @@
 
 
 def power(x, n):
-    # complete your code here
-    # base case
+    if n == 0:
+        return 1
 
-    # recursive case
+    return x * power(x, n - 1)
 
 
-# Once completed, make at least two function calls to test the power function
+print(power(2, 5))     # 32
+print(power(3, 4))     # 81
+print(power(10, 0))    # 1
