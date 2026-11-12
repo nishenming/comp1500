@@ -16,7 +16,6 @@ def test_hot():
     assert comfort_level(30.0) == "HOT"
 
 def test_ok():
-    assert comfort_level(15.1) == "ok"
-    assert comfort_level(20.0) == "ok"
-    assert comfort_level(25.0) == "ok"
-    
+    assert comfort_level(15.1) == "OK"
+    assert comfort_level(20.0) == "OK"
+    assert comfort_level(25.0) == "OK"
