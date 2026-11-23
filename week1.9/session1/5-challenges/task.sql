@@ -2,42 +2,38 @@
 .mode column
 
 -- Task 5: Leeds Eats task sheet
--- Run with:  sqlite3 leeds_eats.db   then   .read task.sql
+-- open with: sqlite3 leeds_eats.db   then   .read task.sql
 
------------------------------------------
--- Bronze: warm-up
------------------------------------------
+-------- Bronze: warm up --------
 
--- 1. every column for every driver
+-- 1. all columns for all drivers
 SELECT * FROM drivers;
 
--- 2. name and price of every dish from Bangkok Garden (restaurant 3)
+-- 2. name and price of Bangkok Garden dishes (restaurant 3)
 SELECT name, price FROM menu_items
 WHERE restaurant_id = 3;
 
--- 3. names of the Indian restaurants
+-- 3. name of the Indian restaurants
 SELECT name FROM restaurants
 WHERE cuisine = 'Indian';
 
 -- 4. how many customers
 SELECT COUNT(*) AS number_of_customers FROM customers;
 
------------------------------------------
--- Silver: requests from customers and staff
------------------------------------------
+-------- Silver: requests --------
 
--- 5. vegetarian, £8 or less, cheapest first
+-- 5. vegetarian and price 8 or less, cheapest first
 SELECT name, price, restaurant_id FROM menu_items
 WHERE is_vegetarian = 1 AND price <= 8
 ORDER BY price ASC;
 
--- 6. hygiene rating below 4, worst first
+-- 6. hygiene rating lower than 4, worst first
 SELECT name, cuisine, hygiene_rating FROM restaurants
 WHERE hygiene_rating < 4
 ORDER BY hygiene_rating ASC;
 
--- 7. restaurants with an LS6 postcode, best rated first
--- 'rated' means the average review score, so we need orders and reviews as well
+-- 7. restaurants in LS6, best rating first
+-- the rating is in reviews table, so I join orders and reviews to get it
 SELECT r.name, r.postcode,
        ROUND(AVG(v.rating), 2) AS average_rating,
        COUNT(v.review_id) AS number_of_reviews
@@ -48,113 +44,96 @@ WHERE r.postcode LIKE 'LS6%'
 GROUP BY r.restaurant_id, r.name, r.postcode
 ORDER BY average_rating DESC;
 
--- 7 (explanation)
--- A matching postcode does not really mean the restaurant is near.
--- A district such as LS6 covers a large area, so two LS6 restaurants can be
--- miles apart. The postcode stored here is the restaurant's registered
--- address, not its delivery area, and a restaurant just outside LS6 could be
--- closer to the student. There is also no distance column, so this data
--- cannot measure distance at all.
+-- 7 answer: same postcode is not same near.
+-- LS6 is a big area, two restaurants in LS6 can be far away from each other.
+-- The postcode here is only the restaurant address, not the delivery area,
+-- and a restaurant outside LS6 can be nearer to the student.
+-- Also we have no distance column, so this data cannot measure distance.
 
--- 8. University of Leeds addresses, newest first
+-- 8. University of Leeds email, newest first
 SELECT name, email, joined_date FROM customers
 WHERE email LIKE '%@leeds.ac.uk'
 ORDER BY joined_date DESC;
 
--- 8 (should Leeds Eats send the email?)
--- No. Having a university email address does not mean the person agreed to
--- marketing. Under UK GDPR they would need a lawful basis, usually consent,
--- and a student's university address is personal data that should not be
--- reused for marketing just because it is in the database. The marketing team
--- should send only to customers who opted in.
+-- 8 answer: I think no.
+-- The email is only for university, the customer did not say yes to advertise.
+-- It is also personal data, so we should only send to customer who agree.
 
--- 9. the 10 most recent cancelled orders
+-- 9. 10 newest cancelled orders
 SELECT order_id, customer_id, restaurant_id, order_time FROM orders
 WHERE status = 'cancelled'
 ORDER BY order_time DESC
 LIMIT 10;
 
--- 10a. which of Pasta Pronto's dishes are vegetarian
+-- 10a. vegetarian dishes of Pasta Pronto
 SELECT name, price FROM menu_items
 WHERE restaurant_id = 4 AND is_vegetarian = 1
 ORDER BY price ASC;
 
--- 10b. Pasta Pronto's most expensive dish
+-- 10b. most expensive dish of Pasta Pronto
 SELECT name, price FROM menu_items
 WHERE restaurant_id = 4
 ORDER BY price DESC
 LIMIT 1;
 
------------------------------------------
--- Gold: think it through
------------------------------------------
+-------- Gold: think it through --------
 
--- 11. October orders that still say 'placed'
+-- 11. orders in October still 'placed'
 SELECT order_id, customer_id, restaurant_id, driver_id, order_time, status
 FROM orders
 WHERE status = 'placed' AND order_time LIKE '2026-10%'
 ORDER BY order_time ASC;
 
--- 11 (why these columns)
--- order_id      - a reference the agent can look up and quote to the customer
--- customer_id   - so the customer can be contacted
--- restaurant_id - so the restaurant can be asked whether the food was made
--- driver_id     - to see whether a driver was ever assigned. For these rows it
---                 is NULL, so no driver picked the order up.
--- order_time    - to see how long it has been stuck
--- status        - to confirm it is still 'placed'
--- delivery_fee is not needed: it does not help anyone solve the problem.
+-- 11 why I choose these columns:
+-- order_id      - the agent can find the order and tell the customer the number
+-- customer_id   - to call the customer
+-- restaurant_id - to ask the restaurant if the food is made
+-- driver_id     - to see if any driver take the order. Here it is NULL, so no driver took it
+-- order_time    - to see how long the order is stuck
+-- status        - to check it is still 'placed'
+-- delivery_fee is not useful for this problem, so I do not show it.
 
--- 12 (what is wrong with the two queries)
--- (a) SELECT name, price FROM menu_items ORDER BY price LIMIT 5 WHERE is_vegetarian = 1;
---     Syntax error. The clauses must be in the order
---     SELECT ... FROM ... WHERE ... ORDER BY ... LIMIT ...
---     so WHERE cannot come after LIMIT.
--- (b) SELECT name, price FROM menu_items WHERE is_vegetarian = 1 LIMIT 5;
---     It runs, but there is no ORDER BY, so SQLite returns the first five
---     matching rows in storage order. That is not the five cheapest dishes,
---     it is just five vegetarian dishes.
--- Correct version:
+-- 12 why the two queries are wrong:
+-- first one: error, because WHERE cannot be after LIMIT.
+--   the order must be SELECT, FROM, WHERE, ORDER BY, LIMIT
+-- second one: it can run but the answer is wrong, because there is no ORDER BY,
+--   so it gives the first 5 rows in the table, not the 5 cheapest.
+-- correct one:
 SELECT name, price FROM menu_items
 WHERE is_vegetarian = 1
 ORDER BY price ASC
 LIMIT 5;
 
--- 13. the cheapest thing on Leeds Eats
+-- 13. cheapest item
 SELECT name, price FROM menu_items
 ORDER BY price ASC
 LIMIT 1;
 
--- 13 (same query with LIMIT 5)
+-- 13 again with LIMIT 5
 SELECT name, price FROM menu_items
 ORDER BY price ASC
 LIMIT 5;
 
--- 13 (what I noticed)
--- With LIMIT 5 the answer is five different dishes that all cost £3.50, so
--- 'the cheapest thing' is a tie, not one item. Taking the first row is
--- arbitrary and depends on storage order. Leeds Eats should tell the
--- customer that several dishes cost the same lowest price, and could break
--- the tie using something the customer cares about, such as the highest
--- rated restaurant.
+-- 13 answer: with LIMIT 5 I get five different dishes and all of them cost 3.50,
+-- so the cheapest is not only one dish, many dishes have the same cheapest price.
+-- So if I take the first row, it is random.
+-- Leeds Eats should tell the customer there are many dishes with the same lowest price,
+-- and maybe order them by the restaurant rating.
 
--- 14. orders placed at 21:00 or later
+-- 14. orders at 21:00 or later
 SELECT COUNT(*) AS late_orders,
        (SELECT COUNT(*) FROM orders) AS total_orders
 FROM orders
 WHERE CAST(strftime('%H', order_time) AS INTEGER) >= 21;
 
--- 14 (is it enough evidence?)
--- 178 out of 1300 orders is about 14%, so there is some late demand, but a
--- count alone will not justify a new menu. It does not say whether those
--- orders were delivered or cancelled, which restaurants and cuisines they
--- came from, how much they were worth, or whether customers actually asked
--- for late-night food. We would also want to know if restaurants are open at
--- that time and whether it is profitable to keep drivers working that late.
+-- 14 answer: 178 of 1300 is about 14%, so some people order late.
+-- But this is not enough to start a new menu. We do not know if these orders
+-- are delivered or cancelled, which restaurant is popular, how much money they pay,
+-- or if customer really ask for late night food. We also need to know if the
+-- restaurant is open at that time and if it is worth to pay driver so late.
 
 -- 15. my own question
--- Request from the marketing team:
---   "Which cuisine gets the best reviews? We want to feature it on the home page."
+-- marketing team ask: "which cuisine has the best review? we want to show it on home page"
 SELECT r.cuisine,
        ROUND(AVG(v.rating), 2) AS average_rating,
        COUNT(v.review_id) AS number_of_reviews
